@@ -4,6 +4,7 @@ backend/alembic.ini
 # Frontend
 # dependencies
 node_modules/
+frontend/.next/
 
 # next.js build output
 .next
