@@ -1,0 +1,44 @@
+# FastAPI & Server
+fastapi==0.111.0
+uvicorn[standard]==0.29.0
+python-multipart==0.0.9
+
+# Database
+sqlalchemy==2.0.30
+alembic==1.13.1
+asyncpg==0.29.0
+psycopg2-binary==2.9.9
+
+# Redis & Task Queue
+redis==5.0.4
+celery==5.4.0
+flower==2.0.1
+
+# Storage (MinIO 직접 사용 — boto3 제거)
+minio==7.2.7
+
+# Crawler / Automation (Playwright만 사용 — selenium 제거)
+playwright==1.44.0
+
+# OCR & Document Analysis
+pytesseract==0.3.10
+# paddleocr는 선택 설치 (1GB+, 한국어 정확도 우수)
+# pip install paddleocr  →  설치 후 자동 활성화됨
+pdf2image==1.17.0
+Pillow==10.3.0
+pdfplumber==0.11.0
+
+# Data Processing
+pydantic==2.7.1
+pydantic-settings==2.2.1
+python-dotenv==1.0.1
+
+# HTTP Client (httpx 단일 사용 — aiohttp 제거)
+httpx==0.27.0
+
+# Monitoring
+sentry-sdk==2.2.0
+
+# Utilities
+python-dateutil==2.9.0
+aiofiles==23.2.1
