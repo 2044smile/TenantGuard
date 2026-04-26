@@ -8,9 +8,26 @@
 
 ## TODO
 
-1. Playwright vs requests 라이브러리 선택
-    - FastAPI -> Celery Worker -> Playwright 실행 -> Chromium 자동 조작
-2. 건축물 대장, 정부24, 인터넷 등기소 API 연결
+1. 건축물 대장, 정부24, 인터넷 등기소 API 연결 (15%)
+2. 소셜 로그인 구현 (Kakao, Naver) (0%)
+3. JWT 토큰을 사용한 보안 강화 (0%)
+4. Refactoring for Next.js code (30%)
+    - 반응형 웹앱 구현
+
+## 구현
+
+### Backend
+
+#### 도로명 주소
+
+![alt text](images/image.png)
+
+### Frontend
+
+#### Next.js
+
+![alt text](images/image-1.png)
+![alt text](images/image-2.png)
 
 ## 접속 포트
 
