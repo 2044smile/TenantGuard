@@ -1,6 +1,28 @@
 backend/app/config.py
 backend/alembic.ini
 
+# Frontend
+# dependencies
+node_modules/
+
+# next.js build output
+.next
+
+# production build
+out/
+
+# env files
+.env.local
+.env*
+
+# logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# misc
+.DS_Store
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[codz]
