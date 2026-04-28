@@ -1,80 +1,138 @@
 'use client'
 
-import { useState } from 'react'
-import { Shield, FileText, Clock, CheckCircle } from 'lucide-react'
+import { Shield, FileSearch, Cpu, ArrowRight, Lock } from 'lucide-react'
 import Link from 'next/link'
 
 export default function Home() {
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex flex-col min-h-screen px-5 animate-fade-in">
       {/* 헤더 */}
-      <header className="px-5 pt-12 pb-6">
-        <div className="flex items-center gap-2 mb-2">
-          <Shield className="w-7 h-7 text-[#e94560]" />
-          <span className="text-xl font-bold text-[#1a1a2e]">TenantGuard</span>
+      <header className="pt-14 pb-8">
+        <div className="flex items-center gap-2.5 mb-6">
+          <div
+            className="w-9 h-9 rounded-xl flex items-center justify-center"
+            style={{ background: 'linear-gradient(135deg, #6366f1, #8b5cf6)' }}
+          >
+            <Shield className="w-5 h-5 text-white" />
+          </div>
+          <span className="text-base font-bold tracking-tight" style={{ color: 'var(--text)' }}>
+            TenantGuard
+          </span>
         </div>
-        <h1 className="text-2xl font-bold text-[#1a1a2e] leading-tight">
+
+        <h1 className="text-[2rem] font-bold leading-[1.2] tracking-tight mb-3" style={{ color: 'var(--text)' }}>
           임차권등기명령<br />
-          <span className="text-[#e94560]">자동으로</span> 신청하세요
+          <span style={{ color: 'var(--primary)' }}>자동으로</span> 신청하세요
         </h1>
-        <p className="mt-2 text-sm text-gray-500">
+        <p className="text-sm leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
           전세사기 피해자를 위한 무료 자동화 서비스
         </p>
       </header>
 
-      {/* 안내 카드 */}
-      <div className="px-5 space-y-3">
-        <div className="card flex items-start gap-3">
-          <div className="step-indicator bg-blue-50 text-blue-600">1</div>
-          <div>
-            <p className="font-semibold text-sm">기본 정보 입력</p>
-            <p className="text-xs text-gray-400 mt-0.5">임차인·임대인·계약 정보를 입력합니다</p>
+      {/* 단계 카드 */}
+      <div className="space-y-3 mb-6">
+        {[
+          {
+            icon: FileSearch,
+            num: '01',
+            title: '기본 정보 입력',
+            desc: '임차인·임대인·계약 정보를 입력합니다',
+            color: 'var(--primary)',
+            bg: 'rgba(99,102,241,0.12)',
+          },
+          {
+            icon: Cpu,
+            num: '02',
+            title: '서류 자동 수집',
+            desc: '등기부등본·주민등록초본을 자동으로 발급합니다',
+            color: '#a855f7',
+            bg: 'rgba(168,85,247,0.12)',
+          },
+          {
+            icon: Shield,
+            num: '03',
+            title: '전자소송 자동 입력',
+            desc: '대법원 전자소송 시스템에 신청서를 자동 작성합니다',
+            color: '#22c55e',
+            bg: 'rgba(34,197,94,0.12)',
+          },
+        ].map(({ icon: Icon, num, title, desc, color, bg }) => (
+          <div key={num} className="card flex items-start gap-4" style={{ background: 'var(--surface)' }}>
+            <div
+              className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0"
+              style={{ background: bg }}
+            >
+              <Icon className="w-5 h-5" style={{ color }} />
+            </div>
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-2 mb-0.5">
+                <span className="text-[10px] font-bold tracking-widest" style={{ color: 'var(--text-muted)' }}>
+                  {num}
+                </span>
+                <p className="text-sm font-semibold" style={{ color: 'var(--text)' }}>{title}</p>
+              </div>
+              <p className="text-xs leading-relaxed" style={{ color: 'var(--text-secondary)' }}>{desc}</p>
+            </div>
           </div>
-        </div>
-        <div className="card flex items-start gap-3">
-          <div className="step-indicator bg-purple-50 text-purple-600">2</div>
-          <div>
-            <p className="font-semibold text-sm">서류 자동 수집</p>
-            <p className="text-xs text-gray-400 mt-0.5">등기부등본·주민등록초본을 자동으로 발급합니다</p>
-          </div>
-        </div>
-        <div className="card flex items-start gap-3">
-          <div className="step-indicator bg-green-50 text-green-600">3</div>
-          <div>
-            <p className="font-semibold text-sm">전자소송 자동 입력</p>
-            <p className="text-xs text-gray-400 mt-0.5">대법원 전자소송 시스템에 자동으로 신청서를 작성합니다</p>
-          </div>
-        </div>
+        ))}
       </div>
 
       {/* 비용 안내 */}
-      <div className="mx-5 mt-4 p-4 bg-amber-50 rounded-2xl border border-amber-100">
-        <p className="text-xs font-semibold text-amber-700 mb-2">신청 비용 (법정 수수료)</p>
-        <div className="space-y-1 text-xs text-amber-600">
-          <div className="flex justify-between"><span>인지대</span><span>1,800원</span></div>
-          <div className="flex justify-between"><span>송달료</span><span>31,200원</span></div>
-          <div className="flex justify-between"><span>등록면허세</span><span>7,200원</span></div>
-          <div className="flex justify-between"><span>등기촉탁수수료</span><span>3,000원</span></div>
-          <div className="flex justify-between font-bold text-amber-800 pt-1 border-t border-amber-200">
-            <span>합계</span><span>43,200원</span>
+      <div
+        className="rounded-2xl p-4 mb-6"
+        style={{
+          background: 'var(--surface-2)',
+          border: '1px solid var(--border)',
+        }}
+      >
+        <p
+          className="text-xs font-bold uppercase tracking-widest mb-3"
+          style={{ color: 'var(--warning)' }}
+        >
+          신청 비용 (법정 수수료)
+        </p>
+        <div className="space-y-2">
+          {[
+            ['인지대', '1,800원'],
+            ['송달료', '31,200원'],
+            ['등록면허세', '7,200원'],
+            ['등기촉탁수수료', '3,000원'],
+          ].map(([label, amount]) => (
+            <div key={label} className="flex justify-between text-xs" style={{ color: 'var(--text-secondary)' }}>
+              <span>{label}</span>
+              <span>{amount}</span>
+            </div>
+          ))}
+          <div
+            className="flex justify-between text-sm font-bold pt-2 mt-1"
+            style={{
+              color: 'var(--text)',
+              borderTop: '1px solid var(--border)',
+            }}
+          >
+            <span>합계</span>
+            <span style={{ color: 'var(--warning)' }}>43,200원</span>
           </div>
         </div>
       </div>
 
-      {/* 시작 버튼 */}
-      <div className="px-5 mt-6">
+      {/* CTA */}
+      <div className="mb-4">
         <Link href="/apply">
-          <button className="btn-primary">
+          <button className="btn-primary flex items-center justify-center gap-2">
             임차권등기명령 신청 시작
+            <ArrowRight className="w-4 h-4" />
           </button>
         </Link>
       </div>
 
-      {/* 하단 안내 */}
-      <p className="text-center text-xs text-gray-400 mt-4 pb-8 px-5">
-        입력하신 개인정보는 신청 완료 후 즉시 삭제됩니다.<br />
-        서비스 이용 중 SSL(HTTPS) 암호화로 보호됩니다.
-      </p>
+      {/* 보안 안내 */}
+      <div className="flex items-center justify-center gap-1.5 pb-10">
+        <Lock className="w-3 h-3" style={{ color: 'var(--text-muted)' }} />
+        <p className="text-[11px] text-center" style={{ color: 'var(--text-muted)' }}>
+          개인정보는 신청 완료 후 즉시 삭제 · SSL 암호화 보호
+        </p>
+      </div>
     </div>
   )
 }

@@ -3,7 +3,6 @@
 import { useState } from 'react'
 import { useDropzone } from 'react-dropzone'
 import { Upload, CheckCircle, AlertCircle } from 'lucide-react'
-import { uploadDocument } from '@/lib/api'
 
 interface DocUploadState {
   file: File | null
@@ -22,7 +21,6 @@ export default function StepDocuments({ applicationId, onStart, isSubmitting }: 
   const [terminationNotice, setTerminationNotice] = useState<DocUploadState>({ file: null, uploaded: false, error: '' })
 
   const makeDropzone = (
-    docType: string,
     setState: React.Dispatch<React.SetStateAction<DocUploadState>>,
   ) => useDropzone({
     accept: { 'application/pdf': ['.pdf'], 'image/*': ['.jpg', '.jpeg', '.png'] },
@@ -33,40 +31,51 @@ export default function StepDocuments({ applicationId, onStart, isSubmitting }: 
     },
   })
 
-  const leaseDropzone = makeDropzone('lease_contract', setLeaseContract)
-  const terminationDropzone = makeDropzone('termination_notice', setTerminationNotice)
+  const leaseDropzone = makeDropzone(setLeaseContract)
+  const terminationDropzone = makeDropzone(setTerminationNotice)
 
   return (
     <div className="space-y-5">
-      <p className="text-sm text-gray-500">
+      <p className="text-sm leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
         자동 수집이 불가능한 서류를 직접 업로드해주세요.
-        임대차계약서는 <span className="font-semibold text-[#1a1a2e]">확정일자 도장이 있는 원본</span>이어야 합니다.
+        임대차계약서는{' '}
+        <span className="font-semibold" style={{ color: 'var(--text)' }}>
+          확정일자 도장이 있는 원본
+        </span>
+        이어야 합니다.
       </p>
 
       {/* 임대차계약서 */}
       <div>
         <div className="flex items-center gap-2 mb-2">
-          <label className="text-sm font-medium">임대차계약서</label>
-          <span className="text-xs bg-red-100 text-red-600 px-2 py-0.5 rounded-full">필수</span>
+          <label className="label mb-0">임대차계약서</label>
+          <span
+            className="text-[10px] font-bold px-2 py-0.5 rounded-full"
+            style={{ background: 'var(--error-bg)', color: 'var(--error)' }}
+          >
+            필수
+          </span>
         </div>
         <div
           {...leaseDropzone.getRootProps()}
-          className={`border-2 border-dashed rounded-2xl p-5 text-center cursor-pointer transition-colors ${
-            leaseContract.file
-              ? 'border-green-400 bg-green-50'
-              : 'border-gray-200 bg-gray-50'
-          }`}
+          className="border-2 border-dashed rounded-2xl p-5 text-center cursor-pointer transition-all"
+          style={{
+            borderColor: leaseContract.file ? 'var(--success)' : 'var(--border)',
+            background: leaseContract.file ? 'var(--success-bg)' : 'var(--surface-2)',
+          }}
         >
           <input {...leaseDropzone.getInputProps()} />
           {leaseContract.file ? (
             <div className="flex items-center justify-center gap-2">
-              <CheckCircle className="w-5 h-5 text-green-500" />
-              <span className="text-sm text-green-700">{leaseContract.file.name}</span>
+              <CheckCircle className="w-5 h-5 shrink-0" style={{ color: 'var(--success)' }} />
+              <span className="text-sm font-medium" style={{ color: 'var(--success)' }}>
+                {leaseContract.file.name}
+              </span>
             </div>
           ) : (
             <div>
-              <Upload className="w-6 h-6 mx-auto mb-1 text-gray-400" />
-              <p className="text-xs text-gray-400">PDF 또는 이미지 업로드</p>
+              <Upload className="w-6 h-6 mx-auto mb-1.5" style={{ color: 'var(--text-muted)' }} />
+              <p className="text-xs" style={{ color: 'var(--text-muted)' }}>PDF 또는 이미지 업로드</p>
             </div>
           )}
         </div>
@@ -75,54 +84,60 @@ export default function StepDocuments({ applicationId, onStart, isSubmitting }: 
       {/* 계약해지통지서 */}
       <div>
         <div className="flex items-center gap-2 mb-2">
-          <label className="text-sm font-medium">계약해지통지서</label>
-          <span className="text-xs bg-yellow-100 text-yellow-600 px-2 py-0.5 rounded-full">권장</span>
+          <label className="label mb-0">계약해지통지서</label>
+          <span
+            className="text-[10px] font-bold px-2 py-0.5 rounded-full"
+            style={{ background: 'var(--warning-bg)', color: 'var(--warning)' }}
+          >
+            권장
+          </span>
         </div>
         <div
           {...terminationDropzone.getRootProps()}
-          className={`border-2 border-dashed rounded-2xl p-5 text-center cursor-pointer transition-colors ${
-            terminationNotice.file
-              ? 'border-green-400 bg-green-50'
-              : 'border-gray-200 bg-gray-50'
-          }`}
+          className="border-2 border-dashed rounded-2xl p-5 text-center cursor-pointer transition-all"
+          style={{
+            borderColor: terminationNotice.file ? 'var(--success)' : 'var(--border)',
+            background: terminationNotice.file ? 'var(--success-bg)' : 'var(--surface-2)',
+          }}
         >
           <input {...terminationDropzone.getInputProps()} />
           {terminationNotice.file ? (
             <div className="flex items-center justify-center gap-2">
-              <CheckCircle className="w-5 h-5 text-green-500" />
-              <span className="text-sm text-green-700">{terminationNotice.file.name}</span>
+              <CheckCircle className="w-5 h-5 shrink-0" style={{ color: 'var(--success)' }} />
+              <span className="text-sm font-medium" style={{ color: 'var(--success)' }}>
+                {terminationNotice.file.name}
+              </span>
             </div>
           ) : (
             <div>
-              <Upload className="w-6 h-6 mx-auto mb-1 text-gray-400" />
-              <p className="text-xs text-gray-400">문자/카카오톡 캡처 이미지도 가능</p>
+              <Upload className="w-6 h-6 mx-auto mb-1.5" style={{ color: 'var(--text-muted)' }} />
+              <p className="text-xs" style={{ color: 'var(--text-muted)' }}>문자/카카오톡 캡처 이미지도 가능</p>
             </div>
           )}
         </div>
-        <p className="text-xs text-gray-400 mt-1">
-          내용증명, 문자 메시지, 카카오톡 대화 캡처 모두 가능합니다.
-        </p>
+        <p className="hint-text">내용증명, 문자 메시지, 카카오톡 대화 캡처 모두 가능합니다.</p>
       </div>
 
       {!leaseContract.file && (
-        <div className="flex items-center gap-2 p-3 bg-amber-50 rounded-xl border border-amber-100">
-          <AlertCircle className="w-4 h-4 text-amber-500 shrink-0" />
-          <p className="text-xs text-amber-600">임대차계약서는 필수 서류입니다.</p>
+        <div
+          className="flex items-center gap-2.5 p-3 rounded-xl"
+          style={{ background: 'var(--warning-bg)', border: '1px solid rgba(245,158,11,0.2)' }}
+        >
+          <AlertCircle className="w-4 h-4 shrink-0" style={{ color: 'var(--warning)' }} />
+          <p className="text-xs" style={{ color: 'var(--warning)' }}>임대차계약서는 필수 서류입니다.</p>
         </div>
       )}
 
-      <button
-        type="button"
-        className="btn-primary"
-        disabled={!leaseContract.file || isSubmitting}
-        onClick={() => {
-          // StepDocuments는 마지막 단계 — 상위에서 certFile을 관리
-          // 실제로는 apply page에서 처리
-          onStart('', new File([], ''))
-        }}
-      >
-        {isSubmitting ? '서류 수집 시작 중...' : '서류 자동 수집 시작'}
-      </button>
+      <div className="pt-2">
+        <button
+          type="button"
+          className="btn-primary"
+          disabled={!leaseContract.file || isSubmitting}
+          onClick={() => onStart('', new File([], ''))}
+        >
+          {isSubmitting ? '서류 수집 시작 중...' : '서류 자동 수집 시작'}
+        </button>
+      </div>
     </div>
   )
 }

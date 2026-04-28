@@ -36,21 +36,15 @@ export default function StepContract({ data, onNext }: Props) {
   const depositRaw = watch('depositAmount')
 
   return (
-    <form onSubmit={handleSubmit(onNext)} className="space-y-4">
+    <form onSubmit={handleSubmit(onNext)} className="space-y-5">
       <div>
-        <label className="block text-sm font-medium mb-1">계약일</label>
-        <input
-          className="input-field"
-          type="date"
-          {...register('contractDate')}
-        />
-        {errors.contractDate && (
-          <p className="text-xs text-red-500 mt-1">{errors.contractDate.message}</p>
-        )}
+        <label className="label">계약일</label>
+        <input className="input-field" type="date" {...register('contractDate')} />
+        {errors.contractDate && <p className="error-text">{errors.contractDate.message}</p>}
       </div>
 
       <div>
-        <label className="block text-sm font-medium mb-1">보증금 (원)</label>
+        <label className="label">보증금 (원)</label>
         <input
           className="input-field"
           type="number"
@@ -58,33 +52,25 @@ export default function StepContract({ data, onNext }: Props) {
           {...register('depositAmount')}
         />
         {depositRaw > 0 && (
-          <p className="text-xs text-blue-600 mt-1">{formatKoreanAmount(Number(depositRaw))}</p>
+          <p className="text-xs mt-1 font-medium" style={{ color: 'var(--primary)' }}>
+            {formatKoreanAmount(Number(depositRaw))}
+          </p>
         )}
-        {errors.depositAmount && (
-          <p className="text-xs text-red-500 mt-1">{errors.depositAmount.message}</p>
-        )}
+        {errors.depositAmount && <p className="error-text">{errors.depositAmount.message}</p>}
       </div>
 
       <div>
-        <label className="block text-sm font-medium mb-1">확정일자</label>
-        <input
-          className="input-field"
-          type="date"
-          {...register('confirmedDate')}
-        />
-        <p className="text-xs text-gray-400 mt-1">임대차계약서의 확정일자 도장 날짜</p>
+        <label className="label">확정일자</label>
+        <input className="input-field" type="date" {...register('confirmedDate')} />
+        <p className="hint-text">임대차계약서의 확정일자 도장 날짜</p>
       </div>
 
       <div>
-        <label className="block text-sm font-medium mb-1">전입일</label>
-        <input
-          className="input-field"
-          type="date"
-          {...register('moveInDate')}
-        />
+        <label className="label">전입일</label>
+        <input className="input-field" type="date" {...register('moveInDate')} />
       </div>
 
-      <div className="pt-4">
+      <div className="pt-2">
         <button type="submit" className="btn-primary">다음</button>
       </div>
     </form>

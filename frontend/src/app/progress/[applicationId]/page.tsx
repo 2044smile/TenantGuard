@@ -6,7 +6,7 @@ import { connectProgressSocket } from '@/lib/api'
 import type { ProgressUpdate } from '@/types/application'
 import { DOCUMENT_LABELS } from '@/types/application'
 import ProgressBar from '@/components/ui/ProgressBar'
-import { CheckCircle, XCircle, Loader2, Shield } from 'lucide-react'
+import { CheckCircle, XCircle, Loader2, Shield, ArrowRight, RefreshCw } from 'lucide-react'
 
 const STATUS_MESSAGES: Record<string, string> = {
   collecting: '서류를 자동 수집하고 있습니다...',
@@ -39,73 +39,97 @@ export default function ProgressPage() {
     router.push(`/preview/${applicationId}?sessionId=${sessionId}`)
   }
 
+  const pct = progress?.progress ?? 0
+  const status = progress?.status
+
   return (
-    <div className="flex flex-col min-h-screen px-5 pt-12">
-      <div className="flex items-center gap-2 mb-8">
-        <Shield className="w-6 h-6 text-[#e94560]" />
-        <span className="font-bold text-lg">서류 자동 수집</span>
+    <div className="flex flex-col min-h-screen px-5 pt-12 pb-10 animate-fade-in">
+      {/* 헤더 */}
+      <div className="flex items-center gap-3 mb-8">
+        <div
+          className="w-10 h-10 rounded-xl flex items-center justify-center"
+          style={{ background: 'rgba(99,102,241,0.12)' }}
+        >
+          <Shield className="w-5 h-5" style={{ color: 'var(--primary)' }} />
+        </div>
+        <div>
+          <p className="text-[10px] font-bold uppercase tracking-widest" style={{ color: 'var(--text-muted)' }}>
+            자동 처리 중
+          </p>
+          <h2 className="font-bold text-base" style={{ color: 'var(--text)' }}>
+            서류 자동 수집
+          </h2>
+        </div>
       </div>
 
-      {/* 진행률 */}
-      <div className="card mb-6">
-        <div className="flex justify-between items-center mb-3">
-          <span className="text-sm font-semibold">
+      {/* 진행률 카드 */}
+      <div
+        className="rounded-2xl p-5 mb-5"
+        style={{ background: 'var(--surface)', border: '1px solid var(--border)' }}
+      >
+        <div className="flex justify-between items-end mb-3">
+          <p className="text-sm font-medium" style={{ color: 'var(--text-secondary)' }}>
             {progress ? STATUS_MESSAGES[progress.status] || progress.message : '처리 준비 중...'}
-          </span>
-          <span className="text-sm font-bold text-[#1a1a2e]">
-            {progress?.progress ?? 0}%
+          </p>
+          <span
+            className="text-2xl font-bold tabular-nums"
+            style={{ color: 'var(--primary)' }}
+          >
+            {pct}%
           </span>
         </div>
-        <ProgressBar value={progress?.progress ?? 0} animated />
+        <ProgressBar value={pct} animated={status === 'collecting' || status === 'analyzing'} />
       </div>
 
-      {/* 서류 수집 현황 */}
-      <div className="space-y-3">
+      {/* 서류 현황 */}
+      <div className="space-y-2">
         {progress?.completedDocs.map((doc) => (
-          <div key={doc} className="flex items-center gap-3 p-3 bg-green-50 rounded-xl">
-            <CheckCircle className="w-5 h-5 text-green-500 shrink-0" />
-            <span className="text-sm font-medium text-green-700">
-              {DOCUMENT_LABELS[doc] || doc}
-            </span>
+          <div key={doc} className="badge-success">
+            <CheckCircle className="w-4 h-4 shrink-0" />
+            <span>{DOCUMENT_LABELS[doc] || doc}</span>
           </div>
         ))}
 
-        {progress?.status === 'collecting' && (
-          <div className="flex items-center gap-3 p-3 bg-blue-50 rounded-xl">
-            <Loader2 className="w-5 h-5 text-blue-500 animate-spin shrink-0" />
-            <span className="text-sm font-medium text-blue-700">
-              {progress.currentStep || '수집 중...'}
-            </span>
+        {(status === 'collecting' || status === 'analyzing') && (
+          <div className="badge-info">
+            <Loader2 className="w-4 h-4 shrink-0 animate-spin" />
+            <span>{progress?.currentStep || '수집 중...'}</span>
           </div>
         )}
 
         {progress?.failedDocs.map((doc) => (
-          <div key={doc} className="flex items-center gap-3 p-3 bg-red-50 rounded-xl">
-            <XCircle className="w-5 h-5 text-red-500 shrink-0" />
-            <span className="text-sm font-medium text-red-700">
-              {DOCUMENT_LABELS[doc] || doc} — 수집 실패
-            </span>
+          <div key={doc} className="badge-error">
+            <XCircle className="w-4 h-4 shrink-0" />
+            <span>{DOCUMENT_LABELS[doc] || doc} — 수집 실패</span>
           </div>
         ))}
       </div>
 
-      {/* 미리보기 이동 버튼 */}
-      {progress?.status === 'preview' && (
+      {/* 완료 → 미리보기 버튼 */}
+      {status === 'preview' && (
         <div className="mt-8">
-          <button className="btn-primary" onClick={handleGoToPreview}>
+          <button className="btn-primary flex items-center justify-center gap-2" onClick={handleGoToPreview}>
             신청서 확인하기
+            <ArrowRight className="w-4 h-4" />
           </button>
         </div>
       )}
 
-      {/* 실패 메시지 */}
-      {progress?.status === 'failed' && (
-        <div className="mt-6 p-4 bg-red-50 rounded-2xl border border-red-100">
-          <p className="text-sm text-red-600">{progress.message}</p>
+      {/* 실패 */}
+      {status === 'failed' && (
+        <div
+          className="mt-6 p-4 rounded-2xl"
+          style={{ background: 'var(--error-bg)', border: '1px solid rgba(239,68,68,0.2)' }}
+        >
+          <p className="text-sm mb-3" style={{ color: 'var(--error)' }}>
+            {progress?.message}
+          </p>
           <button
-            className="mt-3 text-sm font-semibold text-red-700 underline"
+            className="flex items-center gap-1.5 text-sm font-semibold"
+            style={{ color: 'var(--error)' }}
             onClick={() => router.push('/apply')}
           >
+            <RefreshCw className="w-3.5 h-3.5" />
             처음부터 다시 시도
           </button>
         </div>

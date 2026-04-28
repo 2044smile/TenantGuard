@@ -4,34 +4,155 @@
 
 @layer base {
   :root {
-    --primary: #1a1a2e;
-    --primary-light: #16213e;
+    --bg: #0d0d12;
+    --surface: #15151e;
+    --surface-2: #1c1c28;
+    --surface-3: #232334;
+    --border: rgba(255, 255, 255, 0.07);
+    --border-focus: rgba(99, 102, 241, 0.5);
+    --primary: #6366f1;
+    --primary-hover: #5558e8;
+    --primary-glow: rgba(99, 102, 241, 0.25);
     --accent: #e94560;
-    --background: #f8f9fa;
-    --surface: #ffffff;
-    --text: #1a1a2e;
-    --text-secondary: #6b7280;
-    --border: #e5e7eb;
+    --text: #f0f0f8;
+    --text-secondary: #8b8ba8;
+    --text-muted: #52526a;
+    --success: #22c55e;
+    --success-bg: rgba(34, 197, 94, 0.1);
+    --error: #ef4444;
+    --error-bg: rgba(239, 68, 68, 0.1);
+    --warning: #f59e0b;
+    --warning-bg: rgba(245, 158, 11, 0.1);
+    --info: #3b82f6;
+    --info-bg: rgba(59, 130, 246, 0.1);
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  html {
+    color-scheme: dark;
+  }
+
+  body {
+    background-color: var(--bg);
+    color: var(--text);
+    font-feature-settings: 'kern' 1, 'liga' 1;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  input:-webkit-autofill,
+  input:-webkit-autofill:hover,
+  input:-webkit-autofill:focus {
+    -webkit-box-shadow: 0 0 0 1000px var(--surface-2) inset;
+    -webkit-text-fill-color: var(--text);
+    transition: background-color 5000s ease-in-out 0s;
   }
 }
 
 @layer components {
   .btn-primary {
-    @apply w-full py-4 rounded-xl bg-[#1a1a2e] text-white font-semibold text-base
-           active:scale-[0.98] transition-transform disabled:opacity-50 disabled:cursor-not-allowed;
+    @apply w-full py-3.5 rounded-xl font-semibold text-sm text-white
+           active:scale-[0.97] transition-all duration-200
+           disabled:opacity-40 disabled:cursor-not-allowed
+           relative overflow-hidden;
+    background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+    box-shadow: 0 4px 20px rgba(99, 102, 241, 0.3);
+  }
+
+  .btn-primary:hover:not(:disabled) {
+    box-shadow: 0 6px 30px rgba(99, 102, 241, 0.45);
+    transform: translateY(-1px);
+  }
+
+  .btn-secondary {
+    @apply w-full py-3.5 rounded-xl font-semibold text-sm
+           active:scale-[0.97] transition-all duration-200;
+    background: var(--surface-3);
+    border: 1px solid var(--border);
+    color: var(--text);
+  }
+
+  .btn-secondary:hover {
+    border-color: rgba(255, 255, 255, 0.15);
+    background: var(--surface-2);
   }
 
   .input-field {
-    @apply w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50
-           focus:outline-none focus:ring-2 focus:ring-[#1a1a2e] focus:border-transparent
-           text-sm placeholder-gray-400;
+    @apply w-full px-4 py-3 rounded-xl text-sm transition-all duration-200
+           focus:outline-none;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    color: var(--text);
+    caret-color: var(--primary);
+  }
+
+  .input-field::placeholder {
+    color: var(--text-muted);
+  }
+
+  .input-field:focus {
+    border-color: var(--border-focus);
+    box-shadow: 0 0 0 3px var(--primary-glow);
+  }
+
+  .input-field:hover:not(:focus) {
+    border-color: rgba(255, 255, 255, 0.12);
   }
 
   .card {
-    @apply bg-white rounded-2xl border border-gray-100 shadow-sm p-4;
+    @apply rounded-2xl p-5;
+    background: var(--surface);
+    border: 1px solid var(--border);
+  }
+
+  .card-glass {
+    @apply rounded-2xl p-5;
+    background: rgba(21, 21, 30, 0.7);
+    border: 1px solid var(--border);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
   }
 
   .step-indicator {
-    @apply flex items-center justify-center w-8 h-8 rounded-full text-sm font-bold;
+    @apply flex items-center justify-center w-8 h-8 rounded-full text-sm font-bold shrink-0;
+  }
+
+  .badge-success {
+    @apply flex items-center gap-2.5 px-4 py-3 rounded-xl text-sm font-medium;
+    background: var(--success-bg);
+    color: var(--success);
+    border: 1px solid rgba(34, 197, 94, 0.2);
+  }
+
+  .badge-error {
+    @apply flex items-center gap-2.5 px-4 py-3 rounded-xl text-sm font-medium;
+    background: var(--error-bg);
+    color: var(--error);
+    border: 1px solid rgba(239, 68, 68, 0.2);
+  }
+
+  .badge-info {
+    @apply flex items-center gap-2.5 px-4 py-3 rounded-xl text-sm font-medium;
+    background: var(--info-bg);
+    color: var(--info);
+    border: 1px solid rgba(59, 130, 246, 0.2);
+  }
+
+  .label {
+    @apply block text-xs font-semibold uppercase tracking-wide mb-1.5;
+    color: var(--text-secondary);
+  }
+
+  .error-text {
+    @apply text-xs mt-1;
+    color: var(--error);
+  }
+
+  .hint-text {
+    @apply text-xs mt-1;
+    color: var(--text-muted);
   }
 }

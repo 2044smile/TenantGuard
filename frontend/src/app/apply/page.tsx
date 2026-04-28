@@ -9,9 +9,9 @@ import StepContract from '@/components/steps/StepContract'
 import StepCertificate from '@/components/steps/StepCertificate'
 import StepDocuments from '@/components/steps/StepDocuments'
 import ProgressBar from '@/components/ui/ProgressBar'
-import { createApplication, connectProgressSocket } from '@/lib/api'
+import { createApplication } from '@/lib/api'
 import type { ApplicationFormData } from '@/types/application'
-import { ArrowLeft } from 'lucide-react'
+import { ArrowLeft, Shield } from 'lucide-react'
 
 const STEPS = [
   { id: 1, label: '임차인' },
@@ -56,8 +56,6 @@ export default function ApplyPage() {
       }
 
       const result = await createApplication(fullData, file)
-
-      // WebSocket으로 진행 상황 수신 → 진행 페이지로 이동
       router.push(`/progress/${result.applicationId}?sessionId=${result.sessionId}`)
     } catch (e: any) {
       setError(e.response?.data?.detail || '오류가 발생했습니다. 다시 시도해주세요.')
@@ -67,26 +65,44 @@ export default function ApplyPage() {
   }
 
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex flex-col min-h-screen animate-fade-in">
       {/* 헤더 */}
-      <header className="flex items-center gap-3 px-5 pt-10 pb-4">
-        <button onClick={handleBack} className="p-1">
-          <ArrowLeft className="w-5 h-5" />
+      <header
+        className="flex items-center gap-3 px-5 pt-12 pb-5"
+        style={{ borderBottom: '1px solid var(--border)' }}
+      >
+        <button
+          onClick={handleBack}
+          className="w-9 h-9 rounded-xl flex items-center justify-center transition-colors"
+          style={{ background: 'var(--surface-2)', color: 'var(--text-secondary)' }}
+        >
+          <ArrowLeft className="w-4 h-4" />
         </button>
-        <div>
-          <p className="text-xs text-gray-400">STEP {step} / {STEPS.length}</p>
-          <h2 className="font-bold text-base">{STEPS[step - 1].label} 정보</h2>
+        <div className="flex-1">
+          <p className="text-[10px] font-bold uppercase tracking-widest" style={{ color: 'var(--text-muted)' }}>
+            STEP {step} / {STEPS.length}
+          </p>
+          <h2 className="font-bold text-base" style={{ color: 'var(--text)' }}>
+            {STEPS[step - 1].label} 정보
+          </h2>
+        </div>
+        <div
+          className="w-9 h-9 rounded-xl flex items-center justify-center"
+          style={{ background: 'rgba(99,102,241,0.12)' }}
+        >
+          <Shield className="w-4 h-4" style={{ color: 'var(--primary)' }} />
         </div>
       </header>
 
-      {/* 스텝 인디케이터 */}
-      <div className="px-5 mb-6">
+      {/* 진행 바 + 스텝 라벨 */}
+      <div className="px-5 pt-5 pb-2">
         <ProgressBar value={(step / STEPS.length) * 100} />
-        <div className="flex justify-between mt-2">
+        <div className="flex justify-between mt-2.5">
           {STEPS.map((s) => (
             <span
               key={s.id}
-              className={`text-[10px] ${step >= s.id ? 'text-[#1a1a2e] font-semibold' : 'text-gray-300'}`}
+              className="text-[9px] font-semibold transition-colors"
+              style={{ color: step >= s.id ? 'var(--primary)' : 'var(--text-muted)' }}
             >
               {s.label}
             </span>
@@ -96,13 +112,20 @@ export default function ApplyPage() {
 
       {/* 에러 */}
       {error && (
-        <div className="mx-5 mb-4 p-3 bg-red-50 border border-red-200 rounded-xl text-sm text-red-600">
+        <div
+          className="mx-5 mt-4 p-3 rounded-xl text-sm"
+          style={{
+            background: 'var(--error-bg)',
+            border: '1px solid rgba(239,68,68,0.2)',
+            color: 'var(--error)',
+          }}
+        >
           {error}
         </div>
       )}
 
       {/* 스텝 컨텐츠 */}
-      <div className="flex-1 px-5">
+      <div className="flex-1 px-5 pt-6 pb-8">
         {step === 1 && (
           <StepTenant
             data={formData.tenant}
