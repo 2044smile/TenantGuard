@@ -13,6 +13,7 @@
 3. JWT 토큰을 사용한 보안 강화 (0%)
 4. Refactoring for Next.js code (30%)
     - 반응형 웹앱 구현
+5. Oracle Cloud Infrastructure (0%)
 
 ## 구현
 
