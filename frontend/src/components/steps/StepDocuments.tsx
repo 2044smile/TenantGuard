@@ -12,7 +12,7 @@ interface DocUploadState {
 
 interface Props {
   applicationId?: string
-  onStart: (certPassword: string, file: File) => void
+  onStart: () => void
   isSubmitting: boolean
 }
 
@@ -133,7 +133,7 @@ export default function StepDocuments({ applicationId, onStart, isSubmitting }: 
           type="button"
           className="btn-primary"
           disabled={!leaseContract.file || isSubmitting}
-          onClick={() => onStart('', new File([], ''))}
+          onClick={() => onStart()}
         >
           {isSubmitting ? '서류 수집 시작 중...' : '서류 자동 수집 시작'}
         </button>

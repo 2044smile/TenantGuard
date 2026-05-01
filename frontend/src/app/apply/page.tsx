@@ -4,9 +4,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import StepTenant from '@/components/steps/StepTenant'
 import StepLandlord from '@/components/steps/StepLandlord'
-import StepProperty from '@/components/steps/StepProperty'
 import StepContract from '@/components/steps/StepContract'
-import StepCertificate from '@/components/steps/StepCertificate'
 import StepDocuments from '@/components/steps/StepDocuments'
 import ProgressBar from '@/components/ui/ProgressBar'
 import { createApplication } from '@/lib/api'
@@ -16,17 +14,14 @@ import { ArrowLeft, Shield } from 'lucide-react'
 const STEPS = [
   { id: 1, label: '임차인' },
   { id: 2, label: '임대인' },
-  { id: 3, label: '부동산' },
-  { id: 4, label: '계약' },
-  { id: 5, label: '인증서' },
-  { id: 6, label: '서류' },
+  { id: 3, label: '계약' },
+  { id: 4, label: '서류' },
 ]
 
 export default function ApplyPage() {
   const router = useRouter()
   const [step, setStep] = useState(1)
   const [formData, setFormData] = useState<Partial<ApplicationFormData>>({})
-  const [certFile, setCertFile] = useState<File | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
@@ -40,7 +35,7 @@ export default function ApplyPage() {
     else setStep((s) => s - 1)
   }
 
-  const handleStart = async (certPassword: string, file: File) => {
+  const handleStart = async () => {
     if (!formData.tenant || !formData.landlord || !formData.property || !formData.contract) {
       setError('모든 정보를 입력해주세요.')
       return
@@ -50,12 +45,7 @@ export default function ApplyPage() {
     setError(null)
 
     try {
-      const fullData: ApplicationFormData = {
-        ...formData as ApplicationFormData,
-        certPassword,
-      }
-
-      const result = await createApplication(fullData, file)
+      const result = await createApplication(formData as ApplicationFormData)
       router.push(`/progress/${result.applicationId}?sessionId=${result.sessionId}`)
     } catch (e: any) {
       setError(e.response?.data?.detail || '오류가 발생했습니다. 다시 시도해주세요.')
@@ -134,35 +124,21 @@ export default function ApplyPage() {
         )}
         {step === 2 && (
           <StepLandlord
-            data={formData.landlord}
-            onNext={(landlord) => { updateFormData({ landlord }); handleNext() }}
+            landlordData={formData.landlord}
+            propertyData={formData.property}
+            onNext={(landlord, property) => { updateFormData({ landlord, property }); handleNext() }}
           />
         )}
         {step === 3 && (
-          <StepProperty
-            data={formData.property}
-            onNext={(property) => { updateFormData({ property }); handleNext() }}
-          />
-        )}
-        {step === 4 && (
           <StepContract
             data={formData.contract}
             onNext={(contract) => { updateFormData({ contract }); handleNext() }}
           />
         )}
-        {step === 5 && (
-          <StepCertificate
-            onNext={(certPassword, file) => {
-              setCertFile(file)
-              updateFormData({ certPassword })
-              handleNext()
-            }}
-          />
-        )}
-        {step === 6 && (
+        {step === 4 && (
           <StepDocuments
             applicationId={undefined}
-            onStart={(certPassword, file) => handleStart(certPassword, file)}
+            onStart={handleStart}
             isSubmitting={isSubmitting}
           />
         )}

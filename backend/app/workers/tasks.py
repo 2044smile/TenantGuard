@@ -73,9 +73,8 @@ def analyze_documents(self, application_id: str, doc_paths: dict):
 def delete_application_data(application_id: str, session_id: str):
     """제출 완료 후 개인정보 삭제"""
     from app.core.storage import delete_application_documents
-    from app.core.redis_client import delete_session, delete_cert
+    from app.core.redis_client import delete_session
 
     delete_application_documents(application_id)
     asyncio.run(delete_session(session_id))
-    asyncio.run(delete_cert(session_id))
     logger.info(f"[delete_application_data] 개인정보 삭제 완료: {application_id}")

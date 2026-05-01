@@ -11,7 +11,7 @@ import uuid
 import logging
 from datetime import datetime
 from typing import Optional
-from fastapi import APIRouter, UploadFile, File, Form, HTTPException, WebSocket, Depends
+from fastapi import APIRouter, UploadFile, File, Form, HTTPException, WebSocket
 from fastapi.responses import JSONResponse
 from app.schemas.application import (
     ApplicationCreate,
@@ -23,10 +23,8 @@ from app.schemas.application import (
 from app.core.redis_client import (
     create_session,
     get_session,
-    store_cert,
     get_progress,
     delete_session,
-    delete_cert,
 )
 from app.core.storage import upload_document
 from app.workers.tasks import collect_documents, analyze_documents, delete_application_data
@@ -38,21 +36,12 @@ router = APIRouter(prefix="/applications", tags=["Applications"])
 # ── 신청 생성 ─────────────────────────────────────────────────────────────────
 
 @router.post("", response_model=dict, status_code=202)
-async def create_application(
-    application_data: ApplicationCreate,
-    cert_password: str = Form(...),
-    cert_file: UploadFile = File(...),
-):
+async def create_application(application_data: ApplicationCreate):
     """
     임차권등기명령 신청 생성.
-    공동인증서 + 기본 정보 수신 → 서류 자동 수집 시작.
+    기본 정보 수신 → 등기부등본 자동 수집 시작.
     """
     application_id = str(uuid.uuid4())
-
-    # 공동인증서 Redis에 임시 저장 (5분 TTL)
-    cert_bytes = await cert_file.read()
-    if not cert_bytes:
-        raise HTTPException(status_code=400, detail="공동인증서 파일이 비어있습니다.")
 
     session_id = await create_session(
         {
@@ -61,15 +50,9 @@ async def create_application(
             "created_at": datetime.utcnow().isoformat(),
         }
     )
-    await store_cert(session_id, cert_bytes)
 
-    # 비동기 서류 수집 태스크 발행
-    task_data = {
-        **application_data.model_dump(),
-        "cert_password": cert_password,  # 메모리에서만 사용, DB 미저장
-    }
-    # resident_number는 크롤링에만 사용, 로그에 남기지 않음
-    collect_documents.delay(application_id, session_id, task_data)
+    # 비동기 서류 수집 태스크 발행 (resident_number는 크롤링에만 사용, 로그 미출력)
+    collect_documents.delay(application_id, session_id, application_data.model_dump())
 
     return {
         "application_id": application_id,

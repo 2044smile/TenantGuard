@@ -11,6 +11,7 @@ class TenantInfo(BaseModel):
     name: str
     resident_number: str          # 전송 시에만 사용, DB에 저장 안 함
     address: str
+    address_detail: Optional[str] = None  # 동, 호수
     phone: Optional[str] = None
 
     @field_validator("resident_number")
@@ -25,15 +26,15 @@ class TenantInfo(BaseModel):
 class LandlordInfo(BaseModel):
     name: str
     address: str
-    corp_number: Optional[str] = None   # 법인번호 (법인 임대인인 경우)
+    address_detail: Optional[str] = None  # 동, 호수
+    phone: Optional[str] = None
+    corp_number: Optional[str] = None     # 법인번호 (법인 임대인인 경우)
     is_corporate: bool = False
 
 
 class PropertyInfo(BaseModel):
     address: str
-    area: Optional[str] = None          # 예: "59.94"
-    floor: Optional[str] = None         # 예: "5층"
-    property_type: Optional[str] = None # 아파트/주택/오피스텔
+    address_detail: Optional[str] = None  # 동, 호수
 
 
 class ContractInfo(BaseModel):

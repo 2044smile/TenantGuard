@@ -22,59 +22,49 @@ class AddressInfo:
     building_mgmt_no: str   # 건물관리번호 (19자리) — bdMgtSn
 
 
-async def lookup_address(query: str) -> Optional[AddressInfo]:
-    """
-    도로명주소 API로 주소 검색 → AddressInfo 반환
+def _parse_juso_item(item: dict) -> AddressInfo:
+    bd_mgtsn: str = item.get("bdMgtSn", "")
+    return AddressInfo(
+        road_address=item.get("roadAddr", ""),
+        jibun_address=item.get("jibunAddr", ""),
+        sigungu_code=bd_mgtsn[:5] if len(bd_mgtsn) >= 5 else "",
+        bdong_code=bd_mgtsn[5:10] if len(bd_mgtsn) >= 10 else "",
+        building_mgmt_no=bd_mgtsn,
+    )
 
-    bdMgtSn (건물관리번호 19자리) 구조:
-        [5자리 시군구코드][5자리 법정동코드][4자리 번][4자리 지][1자리 구분]
-    """
+
+async def _fetch_juso(query: str, count: int = 10) -> list[dict]:
     if not settings.JUSO_API_KEY:
         raise ValueError("JUSO_API_KEY가 설정되지 않았습니다.")
 
     params = {
         "currentPage": 1,
-        "countPerPage": 10,
+        "countPerPage": count,
         "keyword": query,
         "confmKey": settings.JUSO_API_KEY,
         "resultType": "json",
     }
-
     async with httpx.AsyncClient(timeout=10.0) as client:
         resp = await client.get(settings.JUSO_API_URL, params=params)
         resp.raise_for_status()
         data = resp.json()
 
-    results = data.get("results", {})
-    juso_list = results.get("juso", [])
+    return data.get("results", {}).get("juso", [])
 
-    if not juso_list:
+
+async def lookup_address(query: str) -> Optional[AddressInfo]:
+    """도로명주소 API로 주소 검색 → 첫 번째 결과 반환 (내부 용도)"""
+    items = await _fetch_juso(query, count=1)
+    if not items:
         return None
-
-    # 여러 결과 중 첫 번째 선택 (정확도 순)
-    item = juso_list[0]
-    bd_mgtsn: str = item.get("bdMgtSn", "")
-
-    sigungu_code = bd_mgtsn[:5] if len(bd_mgtsn) >= 5 else ""
-    bdong_code = bd_mgtsn[5:10] if len(bd_mgtsn) >= 10 else ""
-
-    return AddressInfo(
-        road_address=item.get("roadAddr", ""),
-        jibun_address=item.get("jibunAddr", ""),
-        sigungu_code=sigungu_code,
-        bdong_code=bdong_code,
-        building_mgmt_no=bd_mgtsn,
-    )
+    return _parse_juso_item(items[0])
 
 
 @router.get("/lookup")
 async def address_lookup(
     query: str = Query(..., description="검색할 주소 (도로명 또는 지번)"),
 ):
-    """
-    주소로 법정동코드 및 건물관리번호 조회.
-    건축물대장 API 호출에 필요한 코드를 반환한다.
-    """
+    """주소로 법정동코드 및 건물관리번호 조회 (단일 결과)."""
     try:
         info = await lookup_address(query)
     except ValueError as e:
@@ -90,3 +80,24 @@ async def address_lookup(
         "bdong_code": info.bdong_code,
         "building_mgmt_no": info.building_mgmt_no,
     }
+
+
+@router.get("/search")
+async def address_search(
+    query: str = Query(..., description="검색할 주소 (도로명 또는 지번)"),
+    count: int = Query(10, ge=1, le=20, description="반환할 최대 결과 수"),
+):
+    """주소 검색 — 목록 반환 (프론트 주소 검색 팝업용)."""
+    try:
+        items = await _fetch_juso(query, count=count)
+    except ValueError as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+    return [
+        {
+            "road_address": item.get("roadAddr", ""),
+            "jibun_address": item.get("jibunAddr", ""),
+            "building_mgmt_no": item.get("bdMgtSn", ""),
+        }
+        for item in items
+    ]

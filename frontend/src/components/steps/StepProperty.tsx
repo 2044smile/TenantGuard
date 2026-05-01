@@ -3,6 +3,8 @@
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
+import { MapPin } from 'lucide-react'
+import AddressSearchModal from '@/components/ui/AddressSearchModal'
 import type { PropertyInfo } from '@/types/application'
 
 const schema = z.object({
@@ -25,15 +27,26 @@ export default function StepProperty({ data, onNext }: Props) {
     defaultValues: data,
   })
   const selectedType = watch('propertyType')
+  const selectedAddress = watch('address')
 
   return (
     <form onSubmit={handleSubmit(onNext)} className="space-y-5">
       <div>
         <label className="label">임차 목적물 주소</label>
-        <input
-          className="input-field"
-          placeholder="서울특별시 서초구 반포대로 201"
-          {...register('address')}
+        <AddressSearchModal
+          onSelect={(address) => setValue('address', address, { shouldValidate: true })}
+          trigger={
+            <button
+              type="button"
+              className="input-field w-full text-left flex items-center gap-2"
+              style={{ color: selectedAddress ? 'var(--text)' : 'var(--text-muted)' }}
+            >
+              <MapPin className="w-4 h-4 shrink-0" style={{ color: 'var(--primary)' }} />
+              <span className="truncate">
+                {selectedAddress || '주소 검색'}
+              </span>
+            </button>
+          }
         />
         {errors.address && <p className="error-text">{errors.address.message}</p>}
       </div>

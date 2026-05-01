@@ -2,21 +2,22 @@ export interface TenantInfo {
   name: string
   residentNumber: string  // 전송 시만 사용
   address: string
-  phone?: string
+  addressDetail?: string  // 동, 호수
+  phone: string
 }
 
 export interface LandlordInfo {
   name: string
   address: string
+  addressDetail?: string  // 동, 호수
+  phone: string
   corpNumber?: string
   isCorporate: boolean
 }
 
 export interface PropertyInfo {
   address: string
-  area?: string     // ㎡
-  floor?: string
-  propertyType?: string
+  addressDetail?: string  // 동, 호수
 }
 
 export interface ContractInfo {
@@ -31,7 +32,6 @@ export interface ApplicationFormData {
   landlord: LandlordInfo
   property: PropertyInfo
   contract: ContractInfo
-  certPassword: string
 }
 
 export type ApplicationStatus =
