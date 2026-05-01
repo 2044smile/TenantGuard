@@ -10,6 +10,19 @@ const inter = Inter({
 export const metadata: Metadata = {
   title: 'TenantGuard — 임차권등기명령 자동화',
   description: '전세사기 피해자를 위한 임차권등기명령 신청 자동화 서비스',
+  manifest: '/manifest.json',
+  themeColor: '#6366f1',
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'black-translucent',
+    title: 'TenantGuard',
+  },
+  viewport: {
+    width: 'device-width',
+    initialScale: 1,
+    maximumScale: 1,
+    userScalable: false,
+  },
 }
 
 export default function RootLayout({

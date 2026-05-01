@@ -7,7 +7,7 @@ export default function Home() {
   return (
     <div className="flex flex-col min-h-screen px-5 animate-fade-in">
       {/* 헤더 */}
-      <header className="pt-14 pb-8">
+      <header className="pt-6 pb-8">
         <div className="flex items-center gap-2.5 mb-6">
           <div
             className="w-9 h-9 rounded-xl flex items-center justify-center"
