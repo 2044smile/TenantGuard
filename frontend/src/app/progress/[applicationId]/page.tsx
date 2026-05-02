@@ -83,7 +83,7 @@ export default function ProgressPage() {
 
       {/* 서류 현황 */}
       <div className="space-y-2">
-        {progress?.completedDocs.map((doc) => (
+        {(progress?.completedDocs ?? []).map((doc) => (
           <div key={doc} className="badge-success">
             <CheckCircle className="w-4 h-4 shrink-0" />
             <span>{DOCUMENT_LABELS[doc] || doc}</span>
@@ -97,7 +97,7 @@ export default function ProgressPage() {
           </div>
         )}
 
-        {progress?.failedDocs.map((doc) => (
+        {(progress?.failedDocs ?? []).map((doc) => (
           <div key={doc} className="badge-error">
             <XCircle className="w-4 h-4 shrink-0" />
             <span>{DOCUMENT_LABELS[doc] || doc} — 수집 실패</span>

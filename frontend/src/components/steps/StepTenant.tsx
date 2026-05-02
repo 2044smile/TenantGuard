@@ -124,7 +124,22 @@ export default function StepTenant({ data, onNext }: Props) {
 
       <div>
         <label className="label">연락처</label>
-        <input className="input-field" placeholder="010-0000-0000" type="tel" {...register('phone')} />
+        <input
+          className="input-field"
+          placeholder="010-0000-0000"
+          type="tel"
+          {...register('phone')}
+          onChange={(e) => {
+            const digits = e.target.value.replace(/\D/g, '').slice(0, 11)
+            const formatted = digits.length > 7
+              ? `${digits.slice(0, 3)}-${digits.slice(3, 7)}-${digits.slice(7)}`
+              : digits.length > 3
+              ? `${digits.slice(0, 3)}-${digits.slice(3)}`
+              : digits
+            e.target.value = formatted
+            register('phone').onChange(e)
+          }}
+        />
         {errors.phone && <p className="error-text">{errors.phone.message}</p>}
       </div>
 

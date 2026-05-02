@@ -102,7 +102,22 @@ export default function StepLandlord({ landlordData, propertyData, onNext }: Pro
 
           <div>
             <label className="label">연락처</label>
-            <input className="input-field" placeholder="010-0000-0000" type="tel" {...register('landlord.phone')} />
+            <input
+              className="input-field"
+              placeholder="010-0000-0000"
+              type="tel"
+              {...register('landlord.phone')}
+              onChange={(e) => {
+                const digits = e.target.value.replace(/\D/g, '').slice(0, 11)
+                const formatted = digits.length > 7
+                  ? `${digits.slice(0, 3)}-${digits.slice(3, 7)}-${digits.slice(7)}`
+                  : digits.length > 3
+                  ? `${digits.slice(0, 3)}-${digits.slice(3)}`
+                  : digits
+                e.target.value = formatted
+                register('landlord.phone').onChange(e)
+              }}
+            />
             {errors.landlord?.phone && <p className="error-text">{errors.landlord.phone.message}</p>}
           </div>
 
