@@ -119,7 +119,7 @@ class BuildingLedgerApiClient:
     API 키: data.go.kr → "건축물대장정보 서비스" 활용신청
     """
 
-    BASE_URL = "http://apis.data.go.kr/1613000/BldRgstHubService"
+    BASE_URL = "https://apis.data.go.kr/1613000/BldRgstHubService"
 
     def __init__(self, api_key: Optional[str] = None):
         self.api_key = api_key or settings.BUILDING_API_KEY
@@ -146,7 +146,6 @@ class BuildingLedgerApiClient:
             건축물대장 기본개요 JSON
         """
         params = {
-            "serviceKey": self.api_key,
             "sigunguCd": sigungu_code,
             "bjdongCd": bdong_code,
             "bun": bun.zfill(4),
@@ -155,11 +154,10 @@ class BuildingLedgerApiClient:
             "pageNo": 1,
             "_type": "json",
         }
+        # serviceKey는 이미 인코딩된 값이므로 URL에 직접 삽입 (이중 인코딩 방지)
+        base = f"{self.BASE_URL}/getBrBasisOulnInfo?serviceKey={self.api_key}"
         async with httpx.AsyncClient(timeout=15.0) as client:
-            resp = await client.get(
-                f"{self.BASE_URL}/getBrBasisOulnInfo",
-                params=params,
-            )
+            resp = await client.get(base, params=params)
             resp.raise_for_status()
             data = resp.json()
 

@@ -44,10 +44,10 @@ async def _check_building_api() -> dict:
         return {"ok": False, "reason": "BUILDING_API_KEY 미설정"}
     try:
         async with httpx.AsyncClient(timeout=10.0) as client:
+            base = f"{settings.BUILDING_API_URL}/getBrBasisOulnInfo?serviceKey={settings.BUILDING_API_KEY}"
             resp = await client.get(
-                f"{settings.BUILDING_API_URL}/getBrBasisOulnInfo",
+                base,
                 params={
-                    "serviceKey": settings.BUILDING_API_KEY,
                     "sigunguCd": "11650",
                     "bjdongCd": "10100",
                     "bun": "0000",
