@@ -102,7 +102,7 @@
 | API | 발급 URL | `.env` 키 | 발급 |
 |-----|----------|-----------|---| 
 | **도로명주소** | https://business.juso.go.kr/addrlink/addrLinkApi.do | `JUSO_API_KEY` |**O**|
-| **건축물대장** | https://www.data.go.kr → "건축물대장정보 서비스" 검색 | `BUILDING_API_KEY` |X|
+| **건축물대장** | https://www.data.go.kr → "건축물대장정보 서비스" 검색 | `BUILDING_API_KEY` |활용 신청|
 
 ### 선택
 
