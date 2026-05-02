@@ -3,6 +3,7 @@ backend/alembic.ini
 
 # Frontend
 # dependencies
+frontend/.env.local
 node_modules/
 frontend/.next/
 
