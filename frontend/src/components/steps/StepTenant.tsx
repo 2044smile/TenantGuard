@@ -68,7 +68,6 @@ export default function StepTenant({ data, onNext }: Props) {
                 <input
                   type="text"
                   inputMode="numeric"
-                  placeholder="000000"
                   autoComplete="off"
                   value={front}
                   onChange={handleFront}
@@ -81,7 +80,6 @@ export default function StepTenant({ data, onNext }: Props) {
                   ref={backRef}
                   type="password"
                   inputMode="numeric"
-                  placeholder="0000000"
                   autoComplete="off"
                   value={back}
                   onChange={handleBack}

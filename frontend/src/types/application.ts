@@ -6,6 +6,13 @@ export interface TenantInfo {
   phone: string
 }
 
+export interface AgentInfo {
+  name: string
+  address: string
+  addressDetail?: string
+  phone: string
+}
+
 export interface LandlordInfo {
   name: string
   address: string
@@ -13,6 +20,7 @@ export interface LandlordInfo {
   phone: string
   corpNumber?: string
   isCorporate: boolean
+  agent?: AgentInfo       // 대리인 (선택)
 }
 
 export interface PropertyInfo {
@@ -27,6 +35,7 @@ export interface PropertyInfo {
 
 export interface ContractInfo {
   contractDate: string    // ISO 날짜
+  contractEndDate: string // 계약 만료일 (필수)
   depositAmount: number   // 원 단위
   confirmedDate?: string
   moveInDate?: string

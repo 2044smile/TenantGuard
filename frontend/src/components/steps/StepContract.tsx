@@ -7,6 +7,7 @@ import type { ContractInfo } from '@/types/application'
 
 const schema = z.object({
   contractDate: z.string().min(1, '계약일을 선택해주세요.'),
+  contractEndDate: z.string().min(1, '계약 만료일을 선택해주세요.'),
   depositAmount: z.coerce.number().min(1, '보증금을 입력해주세요.'),
   confirmedDate: z.string().optional(),
   moveInDate: z.string().optional(),
@@ -37,10 +38,17 @@ export default function StepContract({ data, onNext }: Props) {
 
   return (
     <form onSubmit={handleSubmit(onNext)} className="space-y-5">
-      <div>
-        <label className="label">계약일</label>
-        <input className="input-field" type="date" {...register('contractDate')} />
-        {errors.contractDate && <p className="error-text">{errors.contractDate.message}</p>}
+      <div className="grid grid-cols-2 gap-3">
+        <div>
+          <label className="label">계약일</label>
+          <input className="input-field" type="date" {...register('contractDate')} />
+          {errors.contractDate && <p className="error-text">{errors.contractDate.message}</p>}
+        </div>
+        <div>
+          <label className="label">계약 만료일</label>
+          <input className="input-field" type="date" {...register('contractEndDate')} />
+          {errors.contractEndDate && <p className="error-text">{errors.contractEndDate.message}</p>}
+        </div>
       </div>
 
       <div>
