@@ -23,6 +23,13 @@ class TenantInfo(BaseModel):
         return cleaned
 
 
+class AgentInfo(BaseModel):
+    name: str
+    address: str
+    address_detail: Optional[str] = None
+    phone: Optional[str] = None
+
+
 class LandlordInfo(BaseModel):
     name: str
     address: str
@@ -30,6 +37,7 @@ class LandlordInfo(BaseModel):
     phone: Optional[str] = None
     corp_number: Optional[str] = None     # 법인번호 (법인 임대인인 경우)
     is_corporate: bool = False
+    agent: Optional[AgentInfo] = None     # 대리인 (선택)
 
 
 class PropertyInfo(BaseModel):
@@ -39,7 +47,8 @@ class PropertyInfo(BaseModel):
 
 class ContractInfo(BaseModel):
     contract_date: datetime
-    deposit_amount: int                 # 보증금 (원 단위)
+    contract_end_date: datetime             # 계약 만료일
+    deposit_amount: int                     # 보증금 (원 단위)
     confirmed_date: Optional[datetime] = None
     move_in_date: Optional[datetime] = None
 
