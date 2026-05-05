@@ -86,7 +86,13 @@ async def upload_document_file(
     사용자가 직접 업로드하는 서류 처리.
     업로드 즉시 AI 분석 태스크 발행.
     """
-    allowed_types = {"lease_contract", "termination_notice", "floor_plan"}
+    allowed_types = {
+        "building_registry",      # 건물등기사항증명서 (고객 업로드)
+        "resident_registration",  # 주민등록초본 (고객 업로드)
+        "lease_contract",         # 임대차계약서 (고객 업로드)
+        "termination_notice",     # 계약해지통지서 (고객 업로드)
+        "floor_plan",             # 별지 도면 (고객 업로드, 선택)
+    }
     if doc_type not in allowed_types:
         raise HTTPException(status_code=400, detail=f"허용되지 않는 서류 유형: {doc_type}")
 
@@ -97,8 +103,8 @@ async def upload_document_file(
     storage_key = f"applications/{application_id}/{doc_type}.pdf"
     upload_document(storage_key, file_bytes, content_type=file.content_type or "application/pdf")
 
-    # 계약서 / 해지통지서는 즉시 AI 분석
-    if doc_type in {"lease_contract", "termination_notice"}:
+    # 업로드 서류 즉시 AI 분석
+    if doc_type in {"building_registry", "resident_registration", "lease_contract", "termination_notice"}:
         analyze_documents.delay(application_id, {doc_type: storage_key})
 
     return {
