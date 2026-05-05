@@ -8,7 +8,9 @@
 
 ## TODO
 
-1. ~~도로명 주소~~, ~~건축물대장~~, ~~정부24~~, 인터넷 등기소 API 연결 (15%)
+1. 공공 API 연결 (25%)
+    - ~~도로명 주소~~ (https://business.juso.go.kr/)
+    - ~~건축물대장(정부24)~~ (https://data.go.kr/)
 2. 소셜 로그인 구현 (Kakao, Naver) (0%)
 3. JWT 토큰을 사용한 보안 강화 (0%)
 4. Refactoring for Next.js code (30%)
