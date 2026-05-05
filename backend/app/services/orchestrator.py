@@ -74,6 +74,9 @@ class DocumentOrchestrator:
             self._collect_building_ledger_api(
                 sigungu_code=prop.get("sigungu_code", ""),
                 bdong_code=prop.get("bdong_code", ""),
+                bun=prop.get("bun", "0000"),
+                ji=prop.get("ji", "0000"),
+                plat_gb_cd=prop.get("plat_gb_cd", "0"),
             ),
         ]
 
@@ -153,16 +156,14 @@ class DocumentOrchestrator:
             return key
 
     async def _collect_building_ledger_api(
-        self, sigungu_code: str, bdong_code: str
+        self, sigungu_code: str, bdong_code: str,
+        bun: str = "0000", ji: str = "0000", plat_gb_cd: str = "0",
     ) -> str:
-        """
-        건축물대장 OpenAPI로 조회 → JSON을 스토리지에 저장
-        sigungu_code / bdong_code 는 도로명주소 API(bdMgtSn)에서 추출
-        """
+        """건축물대장 표제부 OpenAPI 조회 → JSON 저장"""
         if not sigungu_code or not bdong_code:
             raise RuntimeError("시군구코드/법정동코드 없음 — 도로명주소 API 조회 필요")
         client = BuildingLedgerApiClient()
-        info = await client.get_building_info(sigungu_code, bdong_code)
+        info = await client.get_building_info(sigungu_code, bdong_code, bun, ji, plat_gb_cd)
         if not info:
             raise RuntimeError("건축물대장 조회 결과 없음")
         key = f"applications/{self.application_id}/building_ledger.json"

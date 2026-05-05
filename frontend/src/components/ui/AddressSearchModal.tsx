@@ -6,7 +6,7 @@ import { Search, X, MapPin, Loader2 } from 'lucide-react'
 import { searchAddress, type AddressResult } from '@/lib/api'
 
 interface Props {
-  onSelect: (address: string) => void
+  onSelect: (address: string, result?: AddressResult) => void
   trigger: React.ReactNode
 }
 
@@ -35,7 +35,7 @@ export default function AddressSearchModal({ onSelect, trigger }: Props) {
   }
 
   const handleSelect = (result: AddressResult) => {
-    onSelect(result.road_address || result.jibun_address)
+    onSelect(result.road_address || result.jibun_address, result)
     setOpen(false)
     setQuery('')
     setResults([])

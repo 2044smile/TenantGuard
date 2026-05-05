@@ -20,6 +20,11 @@ const schema = z.object({
   property: z.object({
     address: z.string().min(5, '임차 목적물 주소를 입력해주세요.'),
     addressDetail: z.string().optional(),
+    sigunguCode: z.string().optional(),
+    bdongCode: z.string().optional(),
+    bun: z.string().optional(),
+    ji: z.string().optional(),
+    platGbCd: z.string().optional(),
   }),
 })
 
@@ -156,7 +161,16 @@ export default function StepLandlord({ landlordData, propertyData, onNext }: Pro
         </p>
         <div className="space-y-2">
           <AddressSearchModal
-            onSelect={(address) => setValue('property.address', address, { shouldValidate: true })}
+            onSelect={(address, result) => {
+              setValue('property.address', address, { shouldValidate: true })
+              if (result) {
+                setValue('property.sigunguCode', result.sigungu_code)
+                setValue('property.bdongCode', result.bdong_code)
+                setValue('property.bun', result.bun)
+                setValue('property.ji', result.ji)
+                setValue('property.platGbCd', result.plat_gb_cd)
+              }
+            }}
             trigger={
               <button
                 type="button"

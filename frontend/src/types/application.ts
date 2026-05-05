@@ -18,6 +18,11 @@ export interface LandlordInfo {
 export interface PropertyInfo {
   address: string
   addressDetail?: string  // 동, 호수
+  sigunguCode?: string
+  bdongCode?: string
+  bun?: string
+  ji?: string
+  platGbCd?: string
 }
 
 export interface ContractInfo {

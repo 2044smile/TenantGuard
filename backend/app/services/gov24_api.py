@@ -132,22 +132,25 @@ class BuildingLedgerApiClient:
         bdong_code: str,
         bun: str = "0000",
         ji: str = "0000",
+        plat_gb_cd: str = "0",
     ) -> dict:
         """
-        건축물대장 기본개요 조회
+        건축물대장 표제부 조회 (getBrTitleInfo)
 
         Args:
-            sigungu_code: 시군구코드 5자리 (도로명주소 API → bdMgtSn 앞 5자리)
+            sigungu_code: 시군구코드 5자리 (bdMgtSn 앞 5자리)
             bdong_code:   법정동코드 5자리 (bdMgtSn 6~10번째 자리)
-            bun:          번지 4자리
-            ji:           지번 4자리
+            bun:          번지 4자리 (bdMgtSn 11~14번째 자리)
+            ji:           지번 4자리 (bdMgtSn 15~18번째 자리)
+            plat_gb_cd:   대지구분코드 (0: 대지, 1: 산, 2: 블록)
 
         Returns:
-            건축물대장 기본개요 JSON
+            건축물대장 표제부 첫 번째 항목 dict
         """
         params = {
             "sigunguCd": sigungu_code,
             "bjdongCd": bdong_code,
+            "platGbCd": plat_gb_cd,
             "bun": bun.zfill(4),
             "ji": ji.zfill(4),
             "numOfRows": 10,
@@ -155,7 +158,7 @@ class BuildingLedgerApiClient:
             "_type": "json",
         }
         # serviceKey는 이미 인코딩된 값이므로 URL에 직접 삽입 (이중 인코딩 방지)
-        base = f"{self.BASE_URL}/getBrBasisOulnInfo?serviceKey={self.api_key}"
+        base = f"{self.BASE_URL}/getBrTitleInfo?serviceKey={self.api_key}"
         async with httpx.AsyncClient(timeout=15.0) as client:
             resp = await client.get(base, params=params)
             resp.raise_for_status()

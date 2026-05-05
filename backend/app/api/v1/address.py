@@ -20,16 +20,28 @@ class AddressInfo:
     sigungu_code: str       # 시군구코드 (5자리) — 건축물대장 API용
     bdong_code: str         # 법정동코드 (5자리)
     building_mgmt_no: str   # 건물관리번호 (19자리) — bdMgtSn
+    bun: str = "0000"       # 번지 4자리
+    ji: str = "0000"        # 지번 4자리
+    plat_gb_cd: str = "0"   # 대지구분코드 (0: 대지, 1: 산, 2: 블록)
 
 
 def _parse_juso_item(item: dict) -> AddressInfo:
     bd_mgtsn: str = item.get("bdMgtSn", "")
+    # bdMgtSn 구조: [5자리 시군구][5자리 법정동][4자리 번][4자리 지][1자리 구분]
+    bun = bd_mgtsn[10:14] if len(bd_mgtsn) >= 14 else "0000"
+    ji  = bd_mgtsn[14:18] if len(bd_mgtsn) >= 18 else "0000"
+    # 지번주소에 "산"이 포함되면 산(1), 블록이면 2, 나머지 대지(0)
+    jibun = item.get("jibunAddr", "")
+    plat_gb_cd = "1" if jibun.startswith("산") or " 산" in jibun else "0"
     return AddressInfo(
         road_address=item.get("roadAddr", ""),
-        jibun_address=item.get("jibunAddr", ""),
+        jibun_address=jibun,
         sigungu_code=bd_mgtsn[:5] if len(bd_mgtsn) >= 5 else "",
         bdong_code=bd_mgtsn[5:10] if len(bd_mgtsn) >= 10 else "",
         building_mgmt_no=bd_mgtsn,
+        bun=bun,
+        ji=ji,
+        plat_gb_cd=plat_gb_cd,
     )
 
 
@@ -79,6 +91,9 @@ async def address_lookup(
         "sigungu_code": info.sigungu_code,
         "bdong_code": info.bdong_code,
         "building_mgmt_no": info.building_mgmt_no,
+        "bun": info.bun,
+        "ji": info.ji,
+        "plat_gb_cd": info.plat_gb_cd,
     }
 
 
@@ -93,11 +108,4 @@ async def address_search(
     except ValueError as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-    return [
-        {
-            "road_address": item.get("roadAddr", ""),
-            "jibun_address": item.get("jibunAddr", ""),
-            "building_mgmt_no": item.get("bdMgtSn", ""),
-        }
-        for item in items
-    ]
+    return [_parse_juso_item(item).__dict__ for item in items]
