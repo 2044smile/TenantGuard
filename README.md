@@ -19,9 +19,22 @@
 
 ### Backend
 
-#### 도로명 주소
+#### 도로명 주소 - /api/v1/address/lookup
 
 ![alt text](images/image.png)
+
+#### 건축물대장 - /api/v1/address/search
+
+- road_address: 도로명 주소
+- jibun_address: 지번 주소
+- sigungu_code: 시군구 코드
+- bdong_code: 법정동 코드
+- building_mgmt_no: 건물 관리 번호 (고유 ID)
+- bun: 본번
+- ji: 부번
+- plat_gb_cd: 토지 구분 코드 
+
+![alt text](images/image-3.png)
 
 ### Frontend
 
