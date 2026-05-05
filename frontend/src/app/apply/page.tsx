@@ -7,7 +7,7 @@ import StepLandlord from '@/components/steps/StepLandlord'
 import StepContract from '@/components/steps/StepContract'
 import StepDocuments from '@/components/steps/StepDocuments'
 import ProgressBar from '@/components/ui/ProgressBar'
-import { createApplication } from '@/lib/api'
+import { createApplication, uploadDocument } from '@/lib/api'
 import type { ApplicationFormData } from '@/types/application'
 import { ArrowLeft, Shield } from 'lucide-react'
 
@@ -35,7 +35,7 @@ export default function ApplyPage() {
     else setStep((s) => s - 1)
   }
 
-  const handleStart = async () => {
+  const handleStart = async (files: Record<string, File>) => {
     if (!formData.tenant || !formData.landlord || !formData.property || !formData.contract) {
       setError('모든 정보를 입력해주세요.')
       return
@@ -46,6 +46,12 @@ export default function ApplyPage() {
 
     try {
       const result = await createApplication(formData as ApplicationFormData)
+
+      // 업로드된 서류 순차 전송
+      for (const [docType, file] of Object.entries(files)) {
+        await uploadDocument(result.applicationId, docType, file)
+      }
+
       router.push(`/progress/${result.applicationId}?sessionId=${result.sessionId}`)
     } catch (e: any) {
       setError(e.response?.data?.detail || '오류가 발생했습니다. 다시 시도해주세요.')
@@ -137,7 +143,6 @@ export default function ApplyPage() {
         )}
         {step === 4 && (
           <StepDocuments
-            applicationId={undefined}
             onStart={handleStart}
             isSubmitting={isSubmitting}
           />
