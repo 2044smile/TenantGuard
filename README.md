@@ -90,6 +90,21 @@
 |MiniO|S3 호환 API, Docker로 로컬 실행, 무료|
 ---
 
+### OpenCV (Computer Vision Library)
+
+> OpenCV는 Tesseract가 글자를 잘 읽을 수 있도록 이미지를 다듬는 전처리 도구
+> 실제 글자 인식은 Tesseract
+
+```txt
+PDF/이미지
+    ↓
+OpenCV  ← 이미지를 Tesseract가 읽기 좋게 다듬음
+    ↓
+Tesseract ← 실제 글자 인식
+    ↓
+정규식 ← 필요한 정보 추출
+```
+
 ## 비용 분석
 
 ### 사용자 부담 법정 수수료 (건당 고정)
