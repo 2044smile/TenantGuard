@@ -22,8 +22,8 @@ playwright==1.44.0
 
 # OCR & Document Analysis
 pytesseract==0.3.10
-# paddleocr는 선택 설치 (1GB+, 한국어 정확도 우수)
-# pip install paddleocr  →  설치 후 자동 활성화됨
+opencv-python-headless==4.9.0.80   # GUI 없는 서버 환경용 (opencv-python 대체)
+numpy==1.26.4
 pdf2image==1.17.0
 Pillow==10.3.0
 pdfplumber==0.11.0
