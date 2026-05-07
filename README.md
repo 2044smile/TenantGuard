@@ -137,21 +137,12 @@ Tesseract ← 실제 글자 인식
 | **도로명주소** | https://business.juso.go.kr/addrlink/addrLinkApi.do | `JUSO_API_KEY` |**O**|
 | **건축물대장** | https://www.data.go.kr → "건축물대장정보 서비스" 검색 | `BUILDING_API_KEY` |**O**|
 
-### 선택
-
-| API | 발급 URL | `.env` 키 | 발급 |
-|-----|----------|-----------|--|
-| 정부24 OpenAPI | https://www.data.go.kr → "정부24" 검색 | `GOV24_API_KEY` | X |
-
 ---
 
 ## 자동화 범위
 
 | 서류 | 수집 방법 | 비용 |
 |------|-----------|------|
-| 건물등기사항증명서 | **Playwright** → iros.go.kr | 700원/건 (법정) |
-| 법인등기사항증명서 | **Playwright** → iros.go.kr | 700원/건 (법정) |
-| 주민등록초본 | **Playwright** → plus.gov.kr | 무료 |
 | 건축물대장 | **OpenAPI** → data.go.kr | 무료 |
 | 임대차계약서 | 사용자 업로드 + OCR 분석 | — |
 | 계약해지통지서 | 사용자 업로드 + OCR 분석 | — |
@@ -219,19 +210,6 @@ curl http://localhost:8000/api/v1/connectivity
 | 공동인증서 | Redis 5분 TTL → 사용 후 즉시 삭제 |
 | 주민등록번호 | 크롤링에만 사용, DB 미저장 |
 | 수집 서류 | MinIO 1시간 TTL, 제출 후 즉시 삭제 |
-
----
-
-## 작업 이력
-
-| 날짜 | 작업 내용 | WHY |
-|------|-----------|--|
-| 2026-04-26 | 프로젝트 초기 설계 및 전체 스택 구현 |
-| 2026-04-26 | 건축물대장: Playwright 제거 → OpenAPI(data.go.kr) 전환 | OpenAPI 있음|
-| 2026-04-26 | 인터넷등기소: CODEF 제거 → Playwright(iros.go.kr) 유지 | CODEF 비용 발생|
-| 2026-04-26 | 정부24 URL 수정 (www.gov.kr → plus.gov.kr) |
-| 2026-04-26 | 연결 테스트 엔드포인트 추가 (GET /api/v1/connectivity) |
-| 2026-04-26 | 프론트엔드 tsconfig.json @/ alias 수정 |
 
 ---
 
